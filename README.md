@@ -2,6 +2,12 @@
 
 Incomplete Genetic Programming library for Rust.
 
+## Status
+
+[![Build Status](https://api.travis-ci.org/46bit/jeepers.svg)](https://travis-ci.org/46bit/jeepers) [![Coverage Status](https://coveralls.io/repos/github/46bit/jeepers/badge.svg)](https://coveralls.io/github/46bit/jeepers)
+
+## Description
+
 This approach is inspired by the GP in [Python's DEAP](https://github.com/DEAP/deap). The aim is for `jeepers` to be more performant and obtain simpler code through Rust's typesystem.
 
 ## Examples

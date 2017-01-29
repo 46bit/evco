@@ -1,13 +1,13 @@
 [package]
 name = "jeepers"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Michael Mokrysz <hi@46b.it>"]
 repository = "https://github.com/46bit/jeepers.git"
 homepage = "https://github.com/46bit/jeepers"
 license = "LGPL-3.0"
 readme = "README.md"
 #documentation = "http://killercup.github.io/hsl-rs/"
-description = "An incomplete Genetic Programming library for Rust."
+description = "Incomplete Genetic Programming library for Rust."
 
 [dependencies]
 rand = "0.3"
