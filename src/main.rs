@@ -14,7 +14,7 @@ fn main() {
     let d = Direction::arbitrary(&mut gen);
     println!("{:?}", d);
 
-    let tree_gen = TreeGen::full(5, 10);
-    let p = Primitive::arbitrary_tree(&mut gen, tree_gen);
+    let mut tree_gen = TreeGen::full(&mut gen, 5, 10);
+    let p = Primitive::arbitrary_tree(&mut tree_gen);
     println!("{:?}", p);
 }
