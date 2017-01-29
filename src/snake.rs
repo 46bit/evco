@@ -35,11 +35,11 @@ impl Tree for Primitive {
     }
 
     fn rand_nonterminal<R: Rng>(tg: &mut TreeGen<R>, current_depth: usize) -> Primitive {
-        match tg.next_u32() % 2 {
-            0 => Primitive::rand_if_danger(tg, current_depth),
-            1 => Primitive::rand_if_food(tg, current_depth),
-            _ => unreachable!(),
-        }
+        // A list of nonterminal construction methods.
+        let nonterminal_fs = [Primitive::rand_if_danger, Primitive::rand_if_food];
+        // Picks a random nonterminal constructor and runs it.
+        let nonterminal_f = tg.choose(&nonterminal_fs).unwrap();
+        nonterminal_f(tg, current_depth)
     }
 }
 

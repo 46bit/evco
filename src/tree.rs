@@ -29,8 +29,8 @@ pub enum TreeGenMode {
 }
 
 #[derive(PartialEq, Eq, Debug)]
-pub struct TreeGen<'a, R: Rng>
-    where R: 'a
+pub struct TreeGen<'a, R>
+    where R: 'a + Rng
 {
     pub rng: &'a mut R,
     pub mode: TreeGenMode,
@@ -40,7 +40,7 @@ pub struct TreeGen<'a, R: Rng>
 }
 
 impl<'a, R> TreeGen<'a, R>
-    where R: Rng
+    where R: 'a + Rng
 {
     pub fn full(rng: &mut R, min_depth: usize, max_depth: usize) -> TreeGen<R> {
         let chosen_depth = rng.gen_range(min_depth, max_depth + 1);
@@ -65,18 +65,9 @@ impl<'a, R> TreeGen<'a, R>
     }
 
     pub fn half_and_half(rng: &mut R, min_depth: usize, max_depth: usize) -> TreeGen<R> {
-        let chosen_depth = rng.gen_range(min_depth, max_depth + 1);
-        let mode = match rng.next_u32() % 2 {
-            0 => TreeGenMode::Full,
-            1 => TreeGenMode::Grow,
-            _ => unreachable!(),
-        };
-        TreeGen {
-            rng: rng,
-            mode: mode,
-            min_depth: min_depth,
-            max_depth: max_depth,
-            chosen_depth: chosen_depth,
+        match rng.gen() {
+            true => Self::full(rng, min_depth, max_depth),
+            false => Self::grow(rng, min_depth, max_depth),
         }
     }
 
@@ -91,8 +82,8 @@ impl<'a, R> TreeGen<'a, R>
     }
 }
 
-impl<'a, R: Rng> Rng for TreeGen<'a, R>
-    where R: 'a
+impl<'a, R> Rng for TreeGen<'a, R>
+    where R: 'a + Rng
 {
     fn next_u32(&mut self) -> u32 {
         self.rng.next_u32()
