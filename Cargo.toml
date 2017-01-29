@@ -2,10 +2,13 @@
 name = "jeepers"
 version = "0.1.0"
 authors = ["Michael Mokrysz <hi@46b.it>"]
+repository = "https://github.com/46bit/jeepers.git"
+homepage = "https://github.com/46bit/jeepers"
+license = "LGPL-3.0"
+readme = "README.md"
+#documentation = "http://killercup.github.io/hsl-rs/"
+description = "A Genetic Programming library for Rust."
 
 [dependencies]
 rand = "0.3"
 quickcheck = "0.2.*"
-#log = "0.3.6"
-#env_logger = "0.3.5"
-#ansi_term = "0.9"

@@ -1,7 +1,19 @@
 # jeepers
 
-An experiment with Genetic Programming in Rust. This might become a useful library in time.
+Incomplete Genetic Programming library for Rust.
+
+This approach is inspired by the GP in [Python's DEAP](https://github.com/DEAP/deap). The aim is for `jeepers` to be more performant and obtain simpler code through Rust's typesystem.
+
+## Examples
+
+`examples/snake.rs` will in time evolve a Snake AI. For now it simply generates a random tree. Run this using `cargo run --example snake`.
+
+## Development
+
+* Reformat code with `cargo fmt`.
+* Install Clippy with `cargo install clippy`. Then lint the code with `cargo clippy`.
+* Run tests with `cargo test`.
 
 ## License
 
-`jeepers` is distributed under the LGPLv3.0 license. My original intention is a Rust spinoff of [DEAP](https://github.com/DEAP/deap), the "Distributing Evolutionary Algorithms in Python" library. As such I use same license.
+`jeepers` is distributed under the LGPLv3.0 license.
