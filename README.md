@@ -11,7 +11,7 @@ This approach is inspired by the GP in [Python's DEAP](https://github.com/DEAP/d
 ## Development
 
 * Reformat code with `cargo fmt`.
-* Install Clippy with `cargo install clippy`. Then lint the code with `cargo clippy`.
+* Lint code with `cargo build --features dev`.
 * Run tests with `cargo test`.
 
 ## License

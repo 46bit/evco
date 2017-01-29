@@ -6,6 +6,10 @@
 //!
 //! Presently under [active development](https://github.com/46bit/jeepers).
 
+// https://pascalhertleif.de/artikel/good-practices-for-writing-rust-libraries/
+#![cfg_attr(feature = "dev", allow(unstable_features))]
+#![cfg_attr(feature = "dev", feature(plugin))]
+#![cfg_attr(feature = "dev", plugin(clippy))]
 #![feature(box_syntax, associated_consts)]
 #![deny(missing_docs,
         missing_debug_implementations, missing_copy_implementations,

@@ -11,6 +11,11 @@ description = "A Genetic Programming library for Rust."
 
 [dependencies]
 rand = "0.3"
+clippy = {version = "0.0.112", optional = true}
 
 # [dev-dependencies]
 # quickcheck = "0.2.*"
+
+[features]
+default = []
+dev = ["clippy"]
