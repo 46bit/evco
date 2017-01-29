@@ -4,12 +4,14 @@ use rand::Rng;
 ///
 /// Generally only `rand_terminal` and `rand_nonterminal` will need redefining
 /// as other methods have default implementations.
-pub trait Tree
+pub trait Tree<'a>
     where Self: Sized
 {
-    /// What proportion of possible tree nodes are terminals? 0.0 to 1.0.
-    /// TreeGen argument may be removed.
-    fn terminal_proportion<R: Rng>(tg: &mut TreeGen<R>) -> f32;
+    /// Type of input when evaluating the tree.
+    type Environment;
+
+    /// The type the tree will evaluate to.
+    type Action;
 
     /// Generate a new tree within the bounds specified by TreeGen.
     fn rand_tree<R: Rng>(tg: &mut TreeGen<R>) -> Self {
@@ -31,6 +33,13 @@ pub trait Tree
 
     /// Generate a Non-Terminal node to go into a tree.
     fn rand_nonterminal<R: Rng>(tg: &mut TreeGen<R>, current_depth: usize) -> Self;
+
+    /// What proportion of possible tree nodes are terminals? 0.0 to 1.0.
+    /// TreeGen argument may be removed.
+    fn terminal_proportion<R: Rng>(tg: &mut TreeGen<R>) -> f32;
+
+    /// `evaluate` is called on the root node of a Tree to get its output.
+    fn evaluate(&self, env: Self::Environment) -> Self::Action;
 }
 
 /// Whether we're generating fully-balanced trees, or ones whose leaves are at
