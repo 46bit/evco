@@ -14,8 +14,8 @@
         unused_import_braces, unused_qualifications)]
 
 extern crate rand;
-#[cfg(test)]
-extern crate quickcheck;
+// #[cfg(test)]
+// extern crate quickcheck;
 
 /// Module for generating Genetic Program trees.
 pub mod tree;

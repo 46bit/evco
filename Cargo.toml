@@ -11,4 +11,6 @@ description = "A Genetic Programming library for Rust."
 
 [dependencies]
 rand = "0.3"
-quickcheck = "0.2.*"
+
+# [dev-dependencies]
+# quickcheck = "0.2.*"
