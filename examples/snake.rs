@@ -1,5 +1,3 @@
-#![feature(associated_consts, box_syntax)]
-
 extern crate rand;
 extern crate jeepers;
 
@@ -33,7 +31,9 @@ pub enum SnakeTree {
 }
 
 impl Tree for SnakeTree {
-    const TERMINAL_PROPORTION: f32 = 0.1 / (0.1 + 0.2);
+    fn terminal_proportion<R: Rng>(_: &mut TreeGen<R>) -> f32 {
+        0.1 / (0.1 + 0.2)
+    }
 
     fn rand_terminal<R: Rng>(tg: &mut TreeGen<R>, _: usize) -> SnakeTree {
         SnakeTree::Move(Direction::rand(tg))
@@ -53,14 +53,14 @@ impl SnakeTree {
         let direction = Direction::rand(tg);
         let true_ = SnakeTree::rand_node(tg, current_depth + 1);
         let false_ = SnakeTree::rand_node(tg, current_depth + 1);
-        SnakeTree::IfDanger(direction, box true_, box false_)
+        SnakeTree::IfDanger(direction, Box::new(true_), Box::new(false_))
     }
 
     fn rand_if_food<R: Rng>(tg: &mut TreeGen<R>, current_depth: usize) -> SnakeTree {
         let direction = Direction::rand(tg);
         let true_ = SnakeTree::rand_node(tg, current_depth + 1);
         let false_ = SnakeTree::rand_node(tg, current_depth + 1);
-        SnakeTree::IfFood(direction, box true_, box false_)
+        SnakeTree::IfFood(direction, Box::new(true_), Box::new(false_))
     }
 }
 

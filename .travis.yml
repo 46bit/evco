@@ -4,9 +4,9 @@ rust:
 - nightly
 - beta
 - stable
-matrix:
-  allow_failures:
-  - rust: stable
+#matrix:
+#  allow_failures:
+#  - rust: stable
 before_script:
 - |
   pip install 'travis-cargo<0.2' --user &&

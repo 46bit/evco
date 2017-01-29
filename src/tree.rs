@@ -8,8 +8,8 @@ pub trait Tree
     where Self: Sized
 {
     /// What proportion of possible tree nodes are terminals? 0.0 to 1.0.
-    // @TODO: Switch this to a method so we don't need associated_consts.
-    const TERMINAL_PROPORTION: f32;
+    /// TreeGen argument may be removed.
+    fn terminal_proportion<R: Rng>(tg: &mut TreeGen<R>) -> f32;
 
     /// Generate a new tree within the bounds specified by TreeGen.
     fn rand_tree<R: Rng>(tg: &mut TreeGen<R>) -> Self {
@@ -18,7 +18,8 @@ pub trait Tree
 
     /// Generate a random new node to go into a tree.
     fn rand_node<R: Rng>(tg: &mut TreeGen<R>, current_depth: usize) -> Self {
-        if tg.condition(current_depth, Self::TERMINAL_PROPORTION) {
+        let terminal_proportion = Self::terminal_proportion(tg);
+        if tg.condition(current_depth, terminal_proportion) {
             Self::rand_terminal(tg, current_depth)
         } else {
             Self::rand_nonterminal(tg, current_depth)
