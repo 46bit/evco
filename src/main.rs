@@ -4,14 +4,17 @@ extern crate jeepers;
 
 use quickcheck::{StdGen, Arbitrary};
 use rand::OsRng;
-use jeepers::snake;
+
+use jeepers::tree::{Tree, TreeGen};
+use jeepers::snake::{Primitive, Direction};
 
 fn main() {
     let mut gen = StdGen::new(OsRng::new().unwrap(), 50);
 
-    let d = snake::Direction::arbitrary(&mut gen);
+    let d = Direction::arbitrary(&mut gen);
     println!("{:?}", d);
 
-    let t = snake::Primitive::arbitrary(&mut gen);
-    println!("{:?}", t);
+    let tree_gen = TreeGen::full(5, 10);
+    let p = Primitive::arbitrary_tree(&mut gen, tree_gen);
+    println!("{:?}", p);
 }

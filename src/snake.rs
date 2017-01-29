@@ -1,5 +1,7 @@
 use quickcheck::{Gen, Arbitrary};
 
+use tree::*;
+
 #[derive(Clone, Debug)]
 pub enum Direction {
     Left,
@@ -25,54 +27,34 @@ pub enum Primitive {
     Move(Direction),
 }
 
-impl Primitive {
-    fn arbitrary_with_max_depth<G: Gen>(g: &mut G, max_depth: usize) -> Primitive {
-        Primitive::arbitrary_with_depth_range(g, 0, max_depth)
+impl Tree for Primitive {
+    const TERMINAL_PROPORTION: f32 = 0.1 / (0.1 + 0.2);
+
+    fn arbitrary_terminal<G: Gen>(g: &mut G, _: &TreeGen, _: usize) -> Primitive {
+        Primitive::Move(Direction::arbitrary(g))
     }
 
-    fn arbitrary_with_depth_range<G: Gen>(g: &mut G,
-                                          mut min_depth: usize,
-                                          mut max_depth: usize)
-                                          -> Primitive {
-        if max_depth == 0 {
-            return Primitive::Move(Direction::arbitrary(g));
-        }
-        if min_depth > 0 {
-            min_depth -= 1;
-        }
-        max_depth -= 1;
-
-        match g.next_u32() % 3 {
-            0 => Primitive::arbitrary_if_danger(g, min_depth, max_depth),
-            1 => Primitive::arbitrary_if_food(g, min_depth, max_depth),
-            2 => Primitive::Move(Direction::arbitrary(g)),
+    fn arbitrary_nonterminal<G: Gen>(g: &mut G, t: &TreeGen, depth: usize) -> Primitive {
+        match g.next_u32() % 2 {
+            0 => Primitive::arbitrary_if_danger(g, t, depth),
+            1 => Primitive::arbitrary_if_food(g, t, depth),
             _ => unreachable!(),
         }
     }
-
-    fn arbitrary_if_danger<G: Gen>(g: &mut G, min_depth: usize, max_depth: usize) -> Primitive {
-        let max_depths = (g.gen_range(min_depth, max_depth), g.gen_range(min_depth, max_depth));
-        let true_primitive = Primitive::arbitrary_with_depth_range(g, min_depth, max_depths.0);
-        let false_primitive = Primitive::arbitrary_with_depth_range(g, min_depth, max_depths.1);
-        Primitive::IfDanger(Direction::arbitrary(g),
-                            box true_primitive,
-                            box false_primitive)
-    }
-
-    fn arbitrary_if_food<G: Gen>(g: &mut G, min_depth: usize, max_depth: usize) -> Primitive {
-        let max_depths = (g.gen_range(min_depth, max_depth), g.gen_range(min_depth, max_depth));
-        let true_primitive = Primitive::arbitrary_with_depth_range(g, min_depth, max_depths.0);
-        let false_primitive = Primitive::arbitrary_with_depth_range(g, min_depth, max_depths.1);
-        Primitive::IfFood(Direction::arbitrary(g),
-                          box true_primitive,
-                          box false_primitive)
-    }
 }
 
-impl Arbitrary for Primitive {
-    fn arbitrary<G: Gen>(g: &mut G) -> Primitive {
-        let size = g.size();
-        let max_depth = g.gen_range(0, size);
-        return Primitive::arbitrary_with_max_depth(g, max_depth);
+impl Primitive {
+    fn arbitrary_if_danger<G: Gen>(g: &mut G, t: &TreeGen, depth: usize) -> Primitive {
+        let direction = Direction::arbitrary(g);
+        let true_ = Primitive::arbitrary_node(g, t, depth + 1);
+        let false_ = Primitive::arbitrary_node(g, t, depth + 1);
+        Primitive::IfDanger(direction, box true_, box false_)
+    }
+
+    fn arbitrary_if_food<G: Gen>(g: &mut G, t: &TreeGen, depth: usize) -> Primitive {
+        let direction = Direction::arbitrary(g);
+        let true_ = Primitive::arbitrary_node(g, t, depth + 1);
+        let false_ = Primitive::arbitrary_node(g, t, depth + 1);
+        Primitive::IfFood(direction, box true_, box false_)
     }
 }
