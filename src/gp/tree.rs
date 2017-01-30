@@ -30,13 +30,22 @@ pub trait Tree<'a>
     /// Generate a leaf node (a node without any Tree children).
     fn leaf<R: Rng>(tg: &mut TreeGen<R>, current_depth: usize) -> Self;
 
-    /// Used to evaluate the root node of a Tree.
+    /// Get `Self` children of this node. Used to traverse or mutate the tree.
+    fn children(&mut self) -> Vec<&mut Self>;
+
+    /// Used to evaluate the root node of a tree.
     fn evaluate(&self, env: Self::Environment) -> Self::Action;
 
-    /// For calling TreeVisitor::visit_node on every node of a Tree.
-    fn visit<'b, V>(&self, visitor: &mut V)
+    /// For calling `TreeVisitor::visit_node` on every node of a Tree.
+    fn visit<'b, V>(&mut self, visitor: &mut V)
         where V: TreeVisitor<'a, 'b, Self>,
-              Self: 'b;
+              Self: 'b
+    {
+        visitor.visit_node(self);
+        for child in self.children() {
+            visitor.visit_node(child);
+        }
+    }
 }
 
 /// The tree generation mode in use. See `TreeGen`.
@@ -172,5 +181,5 @@ pub trait TreeVisitor<'a, 'b, T>
     where T: 'b + Tree<'a>
 {
     /// Callback to run with each node.
-    fn visit_node(&mut self, node: &T);
+    fn visit_node(&mut self, node: &mut T);
 }

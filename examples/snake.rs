@@ -3,7 +3,7 @@ extern crate jeepers;
 
 use rand::{OsRng, Rng, Rand};
 
-use jeepers::gp::{Tree, TreeGen, TreeVisitor};
+use jeepers::gp::{Tree, TreeGen};
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum TurnDirection {
@@ -162,6 +162,14 @@ impl<'a> Tree<'a> for SnakeTree {
         Move(TurnDirection::rand(tg))
     }
 
+    fn children(&mut self) -> Vec<&mut Self> {
+        match *self {
+            IfDanger(_, ref mut left_, ref mut right_) |
+            IfFood(_, ref mut left_, ref mut right_) => vec![left_, right_],
+            _ => vec![],
+        }
+    }
+
     fn evaluate(&self, env: &mut SnakeEnvironment) -> Self::Action {
         match *self {
             IfDanger(direction, ref left_, ref right_) => {
@@ -179,21 +187,6 @@ impl<'a> Tree<'a> for SnakeTree {
                 }
             }
             Move(direction) => direction,
-        }
-    }
-
-    fn visit<'b, V>(&self, visitor: &mut V)
-        where V: TreeVisitor<'a, 'b, Self>,
-              Self: 'b
-    {
-        visitor.visit_node(self);
-        match *self {
-            IfDanger(_, ref left_, ref right_) |
-            IfFood(_, ref left_, ref right_) => {
-                left_.visit(visitor);
-                right_.visit(visitor);
-            }
-            _ => {}
         }
     }
 }
