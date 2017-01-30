@@ -1,6 +1,6 @@
 [package]
 name = "jeepers"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Michael Mokrysz <hi@46b.it>"]
 repository = "https://github.com/46bit/jeepers.git"
 homepage = "https://github.com/46bit/jeepers"
