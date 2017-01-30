@@ -3,7 +3,7 @@ extern crate jeepers;
 
 use rand::{OsRng, Rng, Rand};
 
-use jeepers::tree::{Tree, TreeGen, TreeVisitor};
+use jeepers::gp::{Tree, TreeGen, TreeVisitor};
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum TurnDirection {
