@@ -169,7 +169,7 @@ pub trait Tree
     /// Get indexed child of this node. Number children from 0; suggested to go left-to-right.
     //fn get_mut_child(&mut self, index: usize) -> Option<&mut BoxTree<Self>>;
     /// Used to evaluate the root node of a tree.
-    fn evaluate(&self, env: Self::Environment) -> Self::Action;
+    fn evaluate(&self, env: &Self::Environment) -> Self::Action;
 }
 
 /// Wrapper around complete Genetic Program trees, caching useful data and indicating

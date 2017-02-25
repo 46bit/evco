@@ -2,6 +2,7 @@ extern crate rand;
 extern crate jeepers;
 
 use std::fmt;
+use std::ops::Rem;
 use rand::{OsRng, Rng, Rand};
 use std::collections::VecDeque;
 
@@ -102,6 +103,7 @@ impl Vector {
     }
 }
 
+#[derive(PartialEq, Eq, Clone, Debug)]
 pub struct SnakeEnvironment {
     pub size: Vector,
     pub food: Vector,
@@ -112,13 +114,13 @@ impl SnakeEnvironment {
     fn turn_to_compass_direction(&self, turn_direction: TurnDirection) -> CompassDirection {
         let snake_current_compass_direction = self.snake[1].direction_to(self.snake[0]).unwrap();
         let directions = CompassDirection::variants();
-        let index = directions.iter().position(|&r| r == snake_current_compass_direction).unwrap();
+        let index: isize = directions.iter().position(|&r| r == snake_current_compass_direction).unwrap() as isize;
         let new_compass_direction_index = match turn_direction {
-            TurnDirection::Left => (index - 1) % 4,
+            TurnDirection::Left => (index + 3).rem(4),
             TurnDirection::Ahead => index,
-            TurnDirection::Right => (index + 1) % 4,
+            TurnDirection::Right => (index + 5).rem(4),
         };
-        directions[new_compass_direction_index]
+        directions[new_compass_direction_index as usize]
     }
 
     fn sense_danger(&self, turn_direction: TurnDirection) -> bool {
@@ -133,6 +135,13 @@ impl SnakeEnvironment {
         let compass_direction = self.turn_to_compass_direction(turn_direction);
         let cell_in_direction = self.snake[0].neighbour(&compass_direction);
         self.food == cell_in_direction
+    }
+
+    fn perform_movement(&mut self, turn_direction: TurnDirection) {
+        let compass_direction = self.turn_to_compass_direction(turn_direction);
+        let old_head = self.snake[0];
+        self.snake.pop();
+        self.snake.insert(0, old_head.neighbour(&compass_direction));
     }
 }
 
@@ -188,7 +197,7 @@ impl Tree for SnakeTree {
         }
     }
 
-    fn evaluate(&self, env: SnakeEnvironment) -> Self::Action {
+    fn evaluate(&self, env: &Self::Environment) -> Self::Action {
         match *self {
             IfDanger(direction, ref left_, ref right_) => {
                 if env.sense_danger(direction) {
@@ -239,17 +248,48 @@ impl fmt::Display for SnakeTree {
 
 fn main() {
     let mut rng = OsRng::new().unwrap();
-    let mut tree_gen = TreeGen::full(&mut rng, 1, 3);
+    let mut tree_gen = TreeGen::full(&mut rng, 1, 4);
 
     let mut indv1: Individual<SnakeTree> = Individual::new(&mut tree_gen);
-    println!("{}", indv1);
     let mut indv2: Individual<SnakeTree> = Individual::new(&mut tree_gen);
-    println!("{}", indv2);
 
     let mut rng = OsRng::new().unwrap();
     let crossover = Crossover::one_point();
     crossover.mate(&mut indv1, &mut indv2, &mut rng);
 
-    println!("{}", indv1);
-    println!("{}", indv2);
+    let mut env = SnakeEnvironment {
+        size: Vector { x: 10, y: 10 },
+        food: Vector { x: 9, y: 9},
+        snake: vec![Vector { x: 3, y: 3 }, Vector { x: 4, y: 3 }],
+    };
+
+    for _ in 0..10000 {
+        let indv: Individual<SnakeTree> = Individual::new(&mut tree_gen);
+
+        let mut score1 = 0;
+        let mut score2 = 0;
+        let mut tick = 100;
+        while tick > 0 {
+            //println!("{:?} {:?}", tick, env.snake);
+            let move_ = indv.tree.evaluate(&env);
+            if env.sense_danger(move_) {
+                break;
+            }
+            if env.sense_food(move_) {
+                score2 += 1;
+                tick += 100;
+                env.food = Vector {
+                    x: rng.gen_range(0, 11),
+                    y: rng.gen_range(0, 11)
+                };
+            }
+            env.perform_movement(move_);
+            score1 += 1;
+            tick -= 1;
+        }
+        if score2 >= 1 {
+            println!("lived={:?} ate={:?}", score1, score2);
+            println!("{}", indv);
+        }
+    }
 }
