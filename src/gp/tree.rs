@@ -1,8 +1,24 @@
 use rand::Rng;
 
+// pub struct Individual<T: Tree<'a>> {
+// tree: T,
+// depth: usize,
+// node_count: usize,
+// }
+//
+// impl Individual {
+// pub fn new<T: Tree>(tree: T) -> Individual {
+// Individual {
+// tree: tree,
+// depth: tree.depth(),
+// }
+// }
+// }
+//
+
 /// The Tree trait will be implemented by the trees of all Genetic Programs.
-pub trait Tree<'a>
-    where Self: Sized
+pub trait Tree
+    where Self: Sized + Clone
 {
     /// Type of input when evaluating the tree.
     type Environment;
@@ -38,14 +54,25 @@ pub trait Tree<'a>
 
     /// For calling `TreeVisitor::visit_node` on every node of a Tree.
     fn visit<'b, V>(&mut self, visitor: &mut V)
-        where V: TreeVisitor<'a, 'b, Self>,
-              Self: 'b
+        where V: TreeVisitor<Self>
     {
         visitor.visit_node(self);
         for child in self.children() {
             visitor.visit_node(child);
         }
     }
+}
+
+impl Iterator<T> for T where T: Tree {
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+
+    }
+}
+
+pub struct TreeIterator<T> where T: Tree {
+    tree_stack
 }
 
 /// The tree generation mode in use. See `TreeGen`.
@@ -169,6 +196,7 @@ impl<'a, R> Rng for TreeGen<'a, R>
     fn next_u64(&mut self) -> u64 {
         self.rng.next_u64()
     }
+
     fn fill_bytes(&mut self, dest: &mut [u8]) {
         self.rng.fill_bytes(dest)
     }
@@ -177,9 +205,28 @@ impl<'a, R> Rng for TreeGen<'a, R>
 /// For running a callback against every node of a tree. Use with `Tree::visit`.
 ///
 /// Suggested uses: counting nodes in a tree, depth of a tree, etc.
-pub trait TreeVisitor<'a, 'b, T>
-    where T: 'b + Tree<'a>
+pub trait TreeVisitor<T>
+    where T: Tree
 {
     /// Callback to run with each node.
     fn visit_node(&mut self, node: &mut T);
+}
+
+#[derive(PartialEq, Eq, Clone, Copy, Debug)]
+pub struct NodeCounter {
+    node_count: usize,
+}
+
+impl NodeCounter {
+    pub fn new() -> NodeCounter {
+        NodeCounter { node_count: 0 }
+    }
+}
+
+impl<T> TreeVisitor<T> for NodeCounter
+    where T: Tree
+{
+    fn visit_node(&mut self, _: &mut T) {
+        self.node_count += 1;
+    }
 }

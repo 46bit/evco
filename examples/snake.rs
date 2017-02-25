@@ -136,10 +136,37 @@ impl SnakeEnvironment {
 
 #[derive(Clone, Debug)]
 pub enum SnakeTree {
-    IfDanger(TurnDirection, Box<SnakeTree>, Box<SnakeTree>),
-    IfFood(TurnDirection, Box<SnakeTree>, Box<SnakeTree>),
+    IfDanger(TurnDirection, Option<Box<SnakeTree>>, Option<Box<SnakeTree>>),
+    IfFood(TurnDirection, Option<Box<SnakeTree>>, Option<Box<SnakeTree>>),
     Move(TurnDirection),
 }
+
+
+pub struct IfDanger(TurnDirection, Box<Node>, Box<Node>);
+
+impl Node for IfDanger {
+    type Children = 2;
+}
+
+impl Traversal for Node {
+    type Item = Node;
+
+    fn foreach<F>(self, f: F) where F: FnMut(Self::Item) -> bool {
+        let stack = VecDeque::new();
+        stack.push_back(&mut self);
+        while Some(node) = stack.pop_front() {
+            if f(node) {
+                break;
+            }
+            for child in node.children().reverse() {
+                stack.push_front(&mut child);
+            }
+        }
+    }
+}
+
+
+
 
 use SnakeTree::*;
 
