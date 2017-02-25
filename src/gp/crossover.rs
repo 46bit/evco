@@ -3,7 +3,7 @@ use rand::Rng;
 
 /// The crossover mode in use. See `Crossover`.
 #[derive(PartialEq, Clone, Copy, Debug)]
-pub enum CrossoverMode {
+enum CrossoverMode {
     /// Corresponds to `Crossover::one_point`.
     OnePoint,
     /// Corresponds to `TreeGen::one_point_leaf_biased`.

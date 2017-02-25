@@ -114,7 +114,8 @@ impl SnakeEnvironment {
     fn turn_to_compass_direction(&self, turn_direction: TurnDirection) -> CompassDirection {
         let snake_current_compass_direction = self.snake[1].direction_to(self.snake[0]).unwrap();
         let directions = CompassDirection::variants();
-        let index: isize = directions.iter().position(|&r| r == snake_current_compass_direction).unwrap() as isize;
+        let index: isize =
+            directions.iter().position(|&r| r == snake_current_compass_direction).unwrap() as isize;
         let new_compass_direction_index = match turn_direction {
             TurnDirection::Left => (index + 3).rem(4),
             TurnDirection::Ahead => index,
@@ -259,11 +260,11 @@ fn main() {
 
     let mut env = SnakeEnvironment {
         size: Vector { x: 10, y: 10 },
-        food: Vector { x: 9, y: 9},
+        food: Vector { x: 9, y: 9 },
         snake: vec![Vector { x: 3, y: 3 }, Vector { x: 4, y: 3 }],
     };
 
-    for _ in 0..10000 {
+    for _ in 0..200 {
         let indv: Individual<SnakeTree> = Individual::new(&mut tree_gen);
 
         let mut score1 = 0;
@@ -280,7 +281,7 @@ fn main() {
                 tick += 100;
                 env.food = Vector {
                     x: rng.gen_range(0, 11),
-                    y: rng.gen_range(0, 11)
+                    y: rng.gen_range(0, 11),
                 };
             }
             env.perform_movement(move_);
