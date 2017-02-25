@@ -6,7 +6,7 @@ use rand::Rng;
 enum CrossoverMode {
     /// Corresponds to `Crossover::one_point`.
     OnePoint,
-    /// Corresponds to `TreeGen::one_point_leaf_biased`.
+    /// Corresponds to `Crossover::one_point_leaf_biased`.
     OnePointLeafBiased(f32),
 }
 
@@ -30,11 +30,12 @@ impl Crossover {
     /// The subtree at a random position in one individual will be swapped with a random
     /// position in a second individual. Each swap points will be a terminal with `termpb`
     /// probability.
+    #[doc(hidden)]
     pub fn one_point_leaf_biased(termpb: f32) -> Crossover {
         Crossover { mode: CrossoverMode::OnePointLeafBiased(termpb) }
     }
 
-    /// Perform crossover between two individuals according to the crossover mode created with.
+    /// Crossover (mate) two individuals according to the configured crossover mode.
     pub fn mate<T, R>(&self, indv1: &mut Individual<T>, indv2: &mut Individual<T>, rng: R)
         where T: Tree,
               R: Rng
