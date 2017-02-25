@@ -1,8 +1,8 @@
 use gp::*;
 use rand::Rng;
+use std::fmt::{self, Debug};
 use std::ops::{Deref, DerefMut};
 use std::collections::VecDeque;
-use std::fmt::{Debug, Formatter, Error};
 
 /// Newtype that wraps a boxed Tree element and implements helper methods.
 #[derive(Clone)]
@@ -56,8 +56,16 @@ impl<T> BoxTree<T>
 impl<T> Debug for BoxTree<T>
     where T: Tree
 {
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.0.fmt(f)
+    }
+}
+
+impl<T> fmt::Display for BoxTree<T>
+    where T: Tree + fmt::Display
+{
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.0)
     }
 }
 
@@ -130,12 +138,12 @@ pub trait Tree
     type Action;
 
     /// Generate a new tree within the bounds specified by TreeGen.
-    fn tree<R: Rng>(tg: &mut TreeGen<R>) -> Self {
+    fn tree<R: Rng>(tg: &mut TreeGen<R>) -> BoxTree<Self> {
         Self::child(tg, 0)
     }
 
     /// Generate a random new node to go into a tree.
-    fn child<R: Rng>(tg: &mut TreeGen<R>, current_depth: usize) -> Self {
+    fn child<R: Rng>(tg: &mut TreeGen<R>, current_depth: usize) -> BoxTree<Self> {
         if tg.have_reached_a_leaf(current_depth) {
             Self::leaf(tg, current_depth)
         } else {
@@ -144,10 +152,10 @@ pub trait Tree
     }
 
     /// Generate a branch node (a node with at least one Tree child).
-    fn branch<R: Rng>(tg: &mut TreeGen<R>, current_depth: usize) -> Self;
+    fn branch<R: Rng>(tg: &mut TreeGen<R>, current_depth: usize) -> BoxTree<Self>;
 
     /// Generate a leaf node (a node without any Tree children).
-    fn leaf<R: Rng>(tg: &mut TreeGen<R>, current_depth: usize) -> Self;
+    fn leaf<R: Rng>(tg: &mut TreeGen<R>, current_depth: usize) -> BoxTree<Self>;
 
     /// Count `Self` children of this node.
     fn count_children(&mut self) -> usize;
@@ -159,8 +167,7 @@ pub trait Tree
     fn children_mut(&mut self) -> Vec<&mut BoxTree<Self>>;
 
     /// Get indexed child of this node. Number children from 0; suggested to go left-to-right.
-    fn get_mut_child(&mut self, index: usize) -> Option<&mut BoxTree<Self>>;
-
+    //fn get_mut_child(&mut self, index: usize) -> Option<&mut BoxTree<Self>>;
     /// Used to evaluate the root node of a tree.
     fn evaluate(&self, env: Self::Environment) -> Self::Action;
 }
@@ -197,5 +204,13 @@ impl<T> Individual<T>
     /// Update cached metadata such at the number of nodes in the tree.
     pub fn recalculate_metadata(&mut self) {
         self.nodes_count = self.tree.count_nodes();
+    }
+}
+
+impl<T> fmt::Display for Individual<T>
+    where T: Tree + fmt::Display
+{
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.tree)
     }
 }

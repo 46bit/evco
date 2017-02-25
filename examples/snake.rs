@@ -1,9 +1,11 @@
 extern crate rand;
 extern crate jeepers;
 
+use std::fmt;
 use rand::{OsRng, Rng, Rand};
+use std::collections::VecDeque;
 
-use jeepers::gp::{Tree, TreeGen};
+use jeepers::gp::{Individual, BoxTree, Tree, TreeGen};
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum TurnDirection {
@@ -136,68 +138,57 @@ impl SnakeEnvironment {
 
 #[derive(Clone, Debug)]
 pub enum SnakeTree {
-    IfDanger(TurnDirection, Option<Box<SnakeTree>>, Option<Box<SnakeTree>>),
-    IfFood(TurnDirection, Option<Box<SnakeTree>>, Option<Box<SnakeTree>>),
+    IfDanger(TurnDirection, BoxTree<SnakeTree>, BoxTree<SnakeTree>),
+    IfFood(TurnDirection, BoxTree<SnakeTree>, BoxTree<SnakeTree>),
     Move(TurnDirection),
 }
 
-
-pub struct IfDanger(TurnDirection, Box<Node>, Box<Node>);
-
-impl Node for IfDanger {
-    type Children = 2;
-}
-
-impl Traversal for Node {
-    type Item = Node;
-
-    fn foreach<F>(self, f: F) where F: FnMut(Self::Item) -> bool {
-        let stack = VecDeque::new();
-        stack.push_back(&mut self);
-        while Some(node) = stack.pop_front() {
-            if f(node) {
-                break;
-            }
-            for child in node.children().reverse() {
-                stack.push_front(&mut child);
-            }
-        }
-    }
-}
-
-
-
-
 use SnakeTree::*;
 
-impl<'a> Tree<'a> for SnakeTree {
-    type Environment = &'a mut SnakeEnvironment;
+impl Tree for SnakeTree {
+    type Environment = SnakeEnvironment;
     type Action = TurnDirection;
 
-    fn branch<R: Rng>(tg: &mut TreeGen<R>, current_depth: usize) -> Self {
+    fn branch<R: Rng>(tg: &mut TreeGen<R>, current_depth: usize) -> BoxTree<Self> {
         let direction = TurnDirection::rand(tg);
-        let true_ = Box::new(Self::child(tg, current_depth + 1));
-        let false_ = Box::new(Self::child(tg, current_depth + 1));
+        let true_ = Self::child(tg, current_depth + 1);
+        let false_ = Self::child(tg, current_depth + 1);
         if tg.gen() {
-            IfDanger(direction, true_, false_)
+            IfDanger(direction, true_, false_).into()
         } else {
-            IfFood(direction, true_, false_)
+            IfFood(direction, true_, false_).into()
         }
     }
 
-    fn leaf<R: Rng>(tg: &mut TreeGen<R>, _: usize) -> Self {
-        Move(TurnDirection::rand(tg))
+    fn leaf<R: Rng>(tg: &mut TreeGen<R>, _: usize) -> BoxTree<Self> {
+        Move(TurnDirection::rand(tg)).into()
     }
 
-    fn children(&mut self) -> Vec<&mut Self> {
+    fn count_children(&mut self) -> usize {
+        match *self {
+            IfDanger(_, _, _) |
+            IfFood(_, _, _) => 2,
+            Move(_) => 0,
+        }
+    }
+
+    fn children(&self) -> Vec<&BoxTree<Self>> {
+        match *self {
+            IfDanger(_, ref left_, ref right_) |
+            IfFood(_, ref left_, ref right_) => vec![left_, right_],
+            Move(_) => vec![],
+        }
+    }
+
+    fn children_mut(&mut self) -> Vec<&mut BoxTree<Self>> {
         match *self {
             IfDanger(_, ref mut left_, ref mut right_) |
             IfFood(_, ref mut left_, ref mut right_) => vec![left_, right_],
-            _ => vec![],
+            Move(_) => vec![],
         }
     }
 
-    fn evaluate(&self, env: &mut SnakeEnvironment) -> Self::Action {
+    fn evaluate(&self, env: SnakeEnvironment) -> Self::Action {
         match *self {
             IfDanger(direction, ref left_, ref right_) => {
                 if env.sense_danger(direction) {
@@ -218,13 +209,41 @@ impl<'a> Tree<'a> for SnakeTree {
     }
 }
 
+impl fmt::Display for SnakeTree {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut stack: VecDeque<&Self> = VecDeque::new();
+        let mut depth_stack: VecDeque<usize> = VecDeque::new();
+        stack.push_back(self);
+        depth_stack.push_back(0);
+        while let (Some(node), Some(depth)) = (stack.pop_back(), depth_stack.pop_back()) {
+            for _ in 0..depth {
+                write!(f, "    ")?;
+            }
+            match *node {
+                IfDanger(direction, _, _) => write!(f, "IfDanger({:?})", direction)?,
+                IfFood(direction, _, _) => write!(f, "IfFood({:?})", direction)?,
+                Move(direction) => write!(f, "Move({:?})", direction)?,
+            }
+            write!(f, "\n")?;
+
+            let mut children = node.children();
+            children.reverse();
+            for child in children {
+                stack.push_back(child);
+                depth_stack.push_back(depth + 1);
+            }
+        }
+        Ok(())
+    }
+}
+
 fn main() {
     let mut rng = OsRng::new().unwrap();
 
-    let d = TurnDirection::rand(&mut rng);
-    println!("{:?}", d);
-
-    let mut tree_gen = TreeGen::full(&mut rng, 5, 10);
+    let mut tree_gen = TreeGen::full(&mut rng, 1, 3);
     let p = SnakeTree::tree(&mut tree_gen);
-    println!("{:?}", p);
+    println!("{}", p);
+
+    let i = Individual::new(p);
+    println!("{}", i);
 }
