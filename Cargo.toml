@@ -11,7 +11,7 @@ description = "Incomplete Genetic Programming library for Rust."
 
 [dependencies]
 rand = "0.3"
-clippy = {version = "0.0.112", optional = true}
+clippy = {version = "0.0.114", optional = true}
 
 # [dev-dependencies]
 # quickcheck = "0.2.*"
