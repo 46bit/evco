@@ -4,7 +4,7 @@
 //! [Python's DEAP](https://github.com/DEAP/deap). This library is hoped to be
 //! more performant and use Rust's typesystem to obtain simpler code.
 //!
-//! Presently under [active development](https://github.com/46bit/jeepers).
+//! Presently under [active development](https://github.com/46bit/evco).
 
 // https://pascalhertleif.de/artikel/good-practices-for-writing-rust-libraries/
 #![cfg_attr(feature = "dev", allow(unstable_features))]

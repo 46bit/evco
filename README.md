@@ -1,18 +1,18 @@
-# jeepers
+# `evco`
 
-Incomplete Genetic Programming library for Rust.
+An Evolutionary Computing library for Rust. Currently an incomplete implementation of Genetic Programming.
 
 ## Status
 
-[![Build Status](https://api.travis-ci.org/46bit/jeepers.svg)](https://travis-ci.org/46bit/jeepers) [![Coverage Status](https://coveralls.io/repos/github/46bit/jeepers/badge.svg)](https://coveralls.io/github/46bit/jeepers)
+[![Build Status](https://api.travis-ci.org/46bit/evco.svg)](https://travis-ci.org/46bit/evco) [![Coverage Status](https://coveralls.io/repos/github/46bit/evco/badge.svg)](https://coveralls.io/github/46bit/evco)
 
 ## Description
 
-This approach is inspired by the GP in [Python's DEAP](https://github.com/DEAP/deap). The aim is for `jeepers` to be more performant and obtain simpler code through Rust's typesystem.
+This approach is inspired by the GP in [Python's DEAP](https://github.com/DEAP/deap). The aim is for `evco` to be more performant and obtain simpler code through Rust's typesystem.
 
 ## Examples
 
-`examples/snake.rs` will in time evolve a Snake AI. For now it simply generates a random tree. Run this using `cargo run --example snake`.
+`examples/snake.rs` will in time evolve a Snake AI. For now it simply evaluates random trees. Run this using `cargo run --example snake`.
 
 ## Development
 
@@ -22,4 +22,4 @@ This approach is inspired by the GP in [Python's DEAP](https://github.com/DEAP/d
 
 ## License
 
-`jeepers` is distributed under the LGPLv3.0 license.
+`evco` is distributed under the LGPLv3.0 license.

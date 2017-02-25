@@ -1,12 +1,12 @@
 extern crate rand;
-extern crate jeepers;
+extern crate evco;
 
 use std::fmt;
 use std::ops::Rem;
 use rand::{OsRng, Rng, Rand};
 use std::collections::VecDeque;
 
-use jeepers::gp::{Individual, BoxTree, Tree, TreeGen, Crossover};
+use evco::gp::{Individual, BoxTree, Tree, TreeGen, Crossover};
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum TurnDirection {
