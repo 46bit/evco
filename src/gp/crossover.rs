@@ -63,6 +63,7 @@ impl Crossover {
             }
             count += 1;
         });
+        let node_from_1 = node_from_1.expect("No node selected from indv2.");
 
         let index2 = rng.gen_range(0, indv2.nodes_count());
         let mut node_from_2 = None;
@@ -73,11 +74,12 @@ impl Crossover {
             }
             count += 1;
         });
+        let node_from_2 = node_from_2.expect("No node selected from indv1.");
 
         count = 0;
         indv1.tree.visit_mut(&mut |node: &mut T| {
             if count == index1 {
-                *node = node_from_2.clone().expect("No node selected from indv2.");
+                *node = node_from_2.clone();
             }
             count += 1;
         });
@@ -85,7 +87,7 @@ impl Crossover {
         count = 0;
         indv2.tree.visit_mut(&mut |node: &mut T| {
             if count == index2 {
-                *node = node_from_1.clone().expect("No node selected from indv1.");
+                *node = node_from_1.clone();
             }
             count += 1;
         });

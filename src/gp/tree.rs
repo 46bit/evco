@@ -186,8 +186,13 @@ pub struct Individual<T>
 impl<T> Individual<T>
     where T: Tree
 {
+    /// Generate a new Tree and individual.
+    pub fn new<R: Rng>(tg: &mut TreeGen<R>) -> Individual<T> {
+        Self::new_from_tree(T::tree(tg))
+    }
+
     /// Create from a Tree.
-    pub fn new(boxtree: BoxTree<T>) -> Individual<T> {
+    pub fn new_from_tree(boxtree: BoxTree<T>) -> Individual<T> {
         let mut indv = Individual {
             tree: boxtree,
             nodes_count: 0,

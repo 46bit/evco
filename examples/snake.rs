@@ -5,7 +5,7 @@ use std::fmt;
 use rand::{OsRng, Rng, Rand};
 use std::collections::VecDeque;
 
-use jeepers::gp::{Individual, BoxTree, Tree, TreeGen};
+use jeepers::gp::{Individual, BoxTree, Tree, TreeGen, Crossover};
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum TurnDirection {
@@ -239,11 +239,17 @@ impl fmt::Display for SnakeTree {
 
 fn main() {
     let mut rng = OsRng::new().unwrap();
-
     let mut tree_gen = TreeGen::full(&mut rng, 1, 3);
-    let p = SnakeTree::tree(&mut tree_gen);
-    println!("{}", p);
 
-    let i = Individual::new(p);
-    println!("{}", i);
+    let mut indv1: Individual<SnakeTree> = Individual::new(&mut tree_gen);
+    println!("{}", indv1);
+    let mut indv2: Individual<SnakeTree> = Individual::new(&mut tree_gen);
+    println!("{}", indv2);
+
+    let mut rng = OsRng::new().unwrap();
+    let crossover = Crossover::one_point();
+    crossover.mate(&mut indv1, &mut indv2, &mut rng);
+
+    println!("{}", indv1);
+    println!("{}", indv2);
 }
