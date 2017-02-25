@@ -256,7 +256,14 @@ fn main() {
 
     let mut rng = OsRng::new().unwrap();
     let crossover = Crossover::one_point();
+    println!("---");
+    println!("{}", indv1);
+    println!("{}", indv2);
+    println!("---");
     crossover.mate(&mut indv1, &mut indv2, &mut rng);
+    println!("{}", indv1);
+    println!("{}", indv2);
+    println!("---");
 
     println!("{}", indv1);
     let mut mutate_rng = OsRng::new().unwrap();

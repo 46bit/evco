@@ -103,48 +103,103 @@ pub struct BoxTree<T>(Box<T>) where T: Tree;
 impl<T> BoxTree<T>
     where T: Tree
 {
-    /// Iterate over every node of the tree with a `FnMut` or `TreeVisitor`.
-    pub fn visit<'b, V>(&self, visitor: &mut V)
-        where V: 'b + TreeVisitor<T>
-    {
-        let mut stack: VecDeque<&Self> = VecDeque::new();
-        stack.push_back(self);
-        while let Some(node) = stack.pop_back() {
-            visitor.visit_node(node);
-            let mut children = node.children();
-            children.reverse();
-            for child in children {
-                stack.push_back(child);
-            }
-        }
-    }
-
-    /// Iterate and mutate over every node of the tree with a `FnMut` or `TreeVisitor`.
-    pub fn visit_mut<'b, V>(&mut self, visitor: &mut V)
-        where V: 'b + TreeMutVisitor<T>
-    {
-        let mut stack: VecDeque<&mut Self> = VecDeque::new();
-        stack.push_back(self);
-        while let Some(node) = stack.pop_back() {
-            visitor.visit_mut_node(node);
-            let mut children = node.children_mut();
-            children.reverse();
-            for child in children {
-                stack.push_back(child);
-            }
-        }
+    /// Extract the internal `Tree`.
+    pub fn inner(self) -> T {
+        *self.0
     }
 
     /// Count the number of nodes below this node in the tree.
-    fn count_nodes(&mut self) -> usize {
-        let mut count = 0;
-        self.visit(&mut |_: &T| count += 1);
-        count
+    pub fn count_nodes(&mut self) -> usize {
+        self.fold(0, |count, _, _, _| count + 1)
     }
 
-    /// Extract internal `Tree`.
-    pub fn inner(self) -> T {
-        *self.0
+    /// Get a clone of a particular value.
+    pub fn get(&mut self, target_index: usize) -> Option<T> {
+        let mut node = None;
+        self.map_while(|current, index, _| if index == target_index {
+            node = Some(current.clone());
+            false
+        } else {
+            true
+        });
+        node
+    }
+
+    /// Traverse the tree with the ability to mutate nodes in-place.
+    ///
+    /// The callback receives a mutable pointer to the current node, the 0-based current iteration
+    /// count, and the 0-based current depth in the tree.
+    pub fn map<F>(&mut self, mut f: F)
+        where F: FnMut(&mut T, usize, usize)
+    {
+        // @TOOD: Benchmark if this optimises out.
+        self.map_while(|p, i, d| {
+            f(p, i, d);
+            true
+        })
+    }
+
+    /// Traverse the tree until the function returns `false`.
+    ///
+    /// The callback receives a mutable pointer to the current node, the 0-based current iteration
+    /// count, and the 0-based current depth in the tree.
+    ///
+    /// The callback returns a `bool`. If `false` the loop terminates.
+    pub fn map_while<F>(&mut self, mut f: F)
+        where F: FnMut(&mut T, usize, usize) -> bool
+    {
+        let mut stack: VecDeque<(&mut Self, usize)> = VecDeque::new();
+        stack.push_back((self, 0));
+        let mut i = 0;
+        while let Some((node, depth)) = stack.pop_back() {
+            if !f(node, i, depth) {
+                break;
+            }
+            let mut children = node.children_mut();
+            children.reverse();
+            for child in children {
+                stack.push_back((child, depth + 1));
+            }
+            i += 1;
+        }
+    }
+
+    /// Traverse the tree building up a return value, with the ability to mutate nodes in-place.
+    ///
+    /// The callback receives the value being built up, a mutable pointer to the current node, the
+    /// 0-based current iteration count, and the 0-based current depth in the tree.
+    pub fn fold<F, V>(&mut self, value: V, mut f: F) -> V
+        where F: FnMut(V, &mut T, usize, usize) -> V
+    {
+        // @TOOD: Benchmark if this optimises out.
+        self.fold_while(value, |v, p, i, d| (true, f(v, p, i, d)))
+    }
+
+    /// Traverse the tree building up a return value, with the ability to mutate nodes in-place.
+    ///
+    /// The callback receives the value being built up, a mutable pointer to the current node, the
+    /// 0-based current iteration count, and the 0-based current depth in the tree.
+    ///
+    /// The callback returns a pair of `(bool, fold_value)`. If `false` the loop terminates.
+    pub fn fold_while<F, V>(&mut self, mut value: V, mut f: F) -> V
+        where F: FnMut(V, &mut T, usize, usize) -> (bool, V)
+    {
+        let mut stack: VecDeque<(&mut Self, usize)> = VecDeque::new();
+        stack.push_back((self, 0));
+        let mut i = 0;
+        while let Some((node, depth)) = stack.pop_back() {
+            value = match f(value, node, i, depth) {
+                (true, value) => value,
+                (false, value) => return value,
+            };
+            let mut children = node.children_mut();
+            children.reverse();
+            for child in children {
+                stack.push_back((child, depth + 1));
+            }
+            i += 1;
+        }
+        value
     }
 }
 
@@ -189,38 +244,6 @@ impl<T> From<T> for BoxTree<T>
 {
     fn from(tree: T) -> BoxTree<T> {
         BoxTree(Box::new(tree))
-    }
-}
-
-/// For running a callback against every node of a tree. Use with `Tree::visit`.
-///
-/// Suggested uses: counting nodes in a tree, depth of a tree, etc.
-pub trait TreeVisitor<T> {
-    /// Callback to run with each node.
-    fn visit_node(&mut self, node: &T);
-}
-
-impl<F, T> TreeVisitor<T> for F
-    where F: FnMut(&T)
-{
-    fn visit_node(&mut self, node: &T) {
-        self(node)
-    }
-}
-
-/// For running a callback against every node of a tree. Use with `Tree::visit`.
-///
-/// Suggested uses: counting nodes in a tree, depth of a tree, etc.
-pub trait TreeMutVisitor<T> {
-    /// Callback to run with each node.
-    fn visit_mut_node(&mut self, node: &mut T);
-}
-
-impl<F, T> TreeMutVisitor<T> for F
-    where F: FnMut(&mut T)
-{
-    fn visit_mut_node(&mut self, node: &mut T) {
-        self(node)
     }
 }
 

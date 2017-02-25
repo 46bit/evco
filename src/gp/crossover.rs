@@ -1,4 +1,5 @@
 use gp::*;
+use std::mem;
 use rand::Rng;
 
 /// The crossover mode in use. See `Crossover`.
@@ -55,42 +56,19 @@ impl Crossover {
         where T: Tree,
               R: Rng
     {
-        let index1 = rng.gen_range(0, indv1.nodes_count());
-        let mut node_from_1 = None;
-        let mut count = 0;
-        indv1.tree.visit(&mut |node: &T| {
-            if count == index1 {
-                node_from_1 = Some(node.clone());
-            }
-            count += 1;
-        });
-        let node_from_1 = node_from_1.expect("No node selected from indv2.");
+        let target_index1 = rng.gen_range(0, indv1.nodes_count());
+        let target_index2 = rng.gen_range(0, indv2.nodes_count());
 
-        let index2 = rng.gen_range(0, indv2.nodes_count());
-        let mut node_from_2 = None;
-        count = 0;
-        indv2.tree.visit(&mut |node: &T| {
-            if count == index2 {
-                node_from_2 = Some(node.clone());
-            }
-            count += 1;
-        });
-        let node_from_2 = node_from_2.expect("No node selected from indv1.");
-
-        count = 0;
-        indv1.tree.visit_mut(&mut |node: &mut T| {
-            if count == index1 {
-                *node = node_from_2.clone();
-            }
-            count += 1;
-        });
-
-        count = 0;
-        indv2.tree.visit_mut(&mut |node: &mut T| {
-            if count == index2 {
-                *node = node_from_1.clone();
-            }
-            count += 1;
+        indv1.tree.map_while(|node1, index1, _| if index1 == target_index1 {
+            indv2.tree.map_while(|node2, index2, _| if index2 == target_index2 {
+                mem::swap(node1, node2);
+                false
+            } else {
+                true
+            });
+            false
+        } else {
+            true
         });
 
         indv1.recalculate_metadata();

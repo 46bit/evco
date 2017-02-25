@@ -93,13 +93,12 @@ impl Mutation {
         where T: Tree,
               R: Rng
     {
-        let index1 = tg.gen_range(0, indv.nodes_count());
-        let mut count = 0;
-        indv.tree.visit_mut(&mut |node: &mut T| {
-            if count == index1 {
-                *node = T::tree(tg).inner();
-            }
-            count += 1;
+        let target_index = tg.gen_range(0, indv.nodes_count());
+        indv.tree.map_while(|node, index, _| if index == target_index {
+            *node = T::tree(tg).inner();
+            false
+        } else {
+            true
         });
     }
 
