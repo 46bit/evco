@@ -141,6 +141,11 @@ impl<T> BoxTree<T>
         self.visit(&mut |_: &T| count += 1);
         count
     }
+
+    /// Extract internal `Tree`.
+    pub fn inner(self) -> T {
+        *self.0
+    }
 }
 
 /// Make `BoxTree` invisible in `Debug` output. At the cost of a little invisibility this

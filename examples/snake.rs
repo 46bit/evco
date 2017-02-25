@@ -6,7 +6,7 @@ use std::ops::Rem;
 use rand::{OsRng, Rng, Rand};
 use std::collections::VecDeque;
 
-use evco::gp::{Individual, BoxTree, Tree, TreeGen, Crossover};
+use evco::gp::{Individual, BoxTree, Tree, TreeGen, Crossover, Mutation};
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum TurnDirection {
@@ -257,6 +257,13 @@ fn main() {
     let mut rng = OsRng::new().unwrap();
     let crossover = Crossover::one_point();
     crossover.mate(&mut indv1, &mut indv2, &mut rng);
+
+    println!("{}", indv1);
+    let mut mutate_rng = OsRng::new().unwrap();
+    let mut tree_gen = TreeGen::full(&mut mutate_rng, 1, 2);
+    let mutation = Mutation::uniform();
+    mutation.mutate(&mut indv1, &mut tree_gen);
+    println!("{}", indv1);
 
     let mut env = SnakeEnvironment {
         size: Vector { x: 10, y: 10 },
