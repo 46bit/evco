@@ -11,7 +11,7 @@ enum CrossoverMode {
     OnePointLeafBiased(f32),
 }
 
-/// Performs crossover between individuals.
+/// Configures crossover (mating) between GP individuals.
 #[derive(PartialEq, Clone, Copy, Debug)]
 pub struct Crossover {
     mode: CrossoverMode,

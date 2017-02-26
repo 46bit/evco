@@ -23,7 +23,7 @@ enum EphemeralMode {
     All,
 }
 
-/// Performs mutation on an individual.
+/// Configures crossover (mating) on GP individuals.
 #[derive(PartialEq, Clone, Copy, Debug)]
 pub struct Mutation {
     mode: MutationMode,

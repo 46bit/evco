@@ -7,6 +7,7 @@ use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 
 use evco::gp::*;
+use evco::gp::tree::*;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 enum Equation {
@@ -216,25 +217,4 @@ fn main() {
 
         println!();
     }
-
-    /*
-    for _ in 0..0 {
-        let indv: Individual<Equation> = Individual::new(&mut tree_gen);
-        let outputs: Vec<f64> = inputs.iter()
-            .map(|input| {
-                let mut output = indv.tree.evaluate(input);
-                if !output.is_finite() {
-                    output = 1.0;
-                }
-                output
-            })
-            .collect();
-        let squared_errors: Vec<f64> = outputs.iter()
-            .zip(expecteds.iter())
-            .map(|(output, expected)| (*output - *expected).powi(2))
-            .collect();
-        let sum_of_squared_errors = squared_errors.iter().fold(0.0, |sum, output| sum + *output);
-        println!("{:?} {}", sum_of_squared_errors, indv.tree);
-    }
-    */
 }

@@ -6,7 +6,8 @@ use std::ops::Rem;
 use rand::{OsRng, Rng, Rand};
 use std::collections::VecDeque;
 
-use evco::gp::{Individual, BoxTree, Tree, TreeGen, Crossover, Mutation};
+use evco::gp::*;
+use evco::gp::tree::*;
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum TurnDirection {
