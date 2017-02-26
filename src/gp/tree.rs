@@ -97,7 +97,7 @@ pub trait Tree
 }
 
 /// Newtype that wraps a boxed Tree element and implements helper methods.
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct BoxTree<T>(Box<T>) where T: Tree;
 
 impl<T> BoxTree<T>

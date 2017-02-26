@@ -12,7 +12,8 @@ This approach is inspired by the GP in [Python's DEAP](https://github.com/DEAP/d
 
 ## Examples
 
-`examples/snake.rs` will in time evolve a Snake AI. For now it simply evaluates random trees. Run this using `cargo run --example snake`.
+* **SYMBOLIC REGRESSION:** `examples/symbolic_regression.rs` evolves a Symbolic Regression to approximate `x^4 + x^3 + x^2 + x`. Run it using `cargo run --example symbolic_regression`.
+* (Unfinished) SNAKE AI: `examples/snake.rs` will in time evolve a Snake AI. For now it simply evaluates random trees. Run it using `cargo run --example snake`.
 
 ## Development
 
