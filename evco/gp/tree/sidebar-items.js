@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["BoxTree","`Box` Wrapper for implementations of Tree."],["TreeGen","Configures depth and properties of GP trees."]],"trait":[["Tree","Trait to be implemented by Genetic Programs trees."]]});

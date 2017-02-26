@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `Tree` trait in crate `evco`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Tree">
+
+    <title>evco::gp::tree::Tree - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../../index.html'>evco</a>::<wbr><a href='../index.html'>gp</a>::<wbr><a href='index.html'>tree</a></p><script>window.sidebarCurrent = {name: 'Tree', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content trait">
+<h1 class='fqn'><span class='in-band'>Trait <a href='../../index.html'>evco</a>::<wbr><a href='../index.html'>gp</a>::<wbr><a href='index.html'>tree</a>::<wbr><a class='trait' href=''>Tree</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../../../src/evco/gp/tree/mod.rs.html#11-53' title='goto source code'>[src]</a></span></h1>
+<pre class='rust trait'>pub trait Tree <span class='where'>where Self: <a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a> + <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> + <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a></span> {
+    type <a href='#associatedtype.Environment' class='type'>Environment</a>;
+    type <a href='#associatedtype.Action' class='type'>Action</a>;
+    fn <a href='#tymethod.branch' class='fnname'>branch</a>&lt;R:&nbsp;<a class='trait' href='../../../rand/trait.Rng.html' title='rand::Rng'>Rng</a>&gt;(tg: &amp;mut <a class='struct' href='../../../evco/gp/tree/struct.TreeGen.html' title='evco::gp::tree::TreeGen'>TreeGen</a>&lt;R&gt;,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; current_depth: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&gt; <a class='struct' href='../../../evco/gp/tree/struct.BoxTree.html' title='evco::gp::tree::BoxTree'>BoxTree</a>&lt;Self&gt;;
+    fn <a href='#tymethod.leaf' class='fnname'>leaf</a>&lt;R:&nbsp;<a class='trait' href='../../../rand/trait.Rng.html' title='rand::Rng'>Rng</a>&gt;(tg: &amp;mut <a class='struct' href='../../../evco/gp/tree/struct.TreeGen.html' title='evco::gp::tree::TreeGen'>TreeGen</a>&lt;R&gt;, current_depth: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>) -&gt; <a class='struct' href='../../../evco/gp/tree/struct.BoxTree.html' title='evco::gp::tree::BoxTree'>BoxTree</a>&lt;Self&gt;;
+    fn <a href='#tymethod.count_children' class='fnname'>count_children</a>(&amp;mut self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>;
+    fn <a href='#tymethod.children' class='fnname'>children</a>(&amp;self) -&gt; <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;&amp;<a class='struct' href='../../../evco/gp/tree/struct.BoxTree.html' title='evco::gp::tree::BoxTree'>BoxTree</a>&lt;Self&gt;&gt;;
+    fn <a href='#tymethod.children_mut' class='fnname'>children_mut</a>(&amp;mut self) -&gt; <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;&amp;mut <a class='struct' href='../../../evco/gp/tree/struct.BoxTree.html' title='evco::gp::tree::BoxTree'>BoxTree</a>&lt;Self&gt;&gt;;
+    fn <a href='#tymethod.evaluate' class='fnname'>evaluate</a>(&amp;self, env: &amp;Self::<a class='trait' href='../../../evco/gp/tree/trait.Tree.html' title='evco::gp::tree::Tree'>Environment</a>) -&gt; Self::<a class='trait' href='../../../evco/gp/tree/trait.Tree.html' title='evco::gp::tree::Tree'>Action</a>;
+
+    fn <a href='#method.tree' class='fnname'>tree</a>&lt;R:&nbsp;<a class='trait' href='../../../rand/trait.Rng.html' title='rand::Rng'>Rng</a>&gt;(tg: &amp;mut <a class='struct' href='../../../evco/gp/tree/struct.TreeGen.html' title='evco::gp::tree::TreeGen'>TreeGen</a>&lt;R&gt;) -&gt; <a class='struct' href='../../../evco/gp/tree/struct.BoxTree.html' title='evco::gp::tree::BoxTree'>BoxTree</a>&lt;Self&gt; { ... }
+    fn <a href='#method.child' class='fnname'>child</a>&lt;R:&nbsp;<a class='trait' href='../../../rand/trait.Rng.html' title='rand::Rng'>Rng</a>&gt;(tg: &amp;mut <a class='struct' href='../../../evco/gp/tree/struct.TreeGen.html' title='evco::gp::tree::TreeGen'>TreeGen</a>&lt;R&gt;, current_depth: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>) -&gt; <a class='struct' href='../../../evco/gp/tree/struct.BoxTree.html' title='evco::gp::tree::BoxTree'>BoxTree</a>&lt;Self&gt; { ... }
+}</pre><div class='docblock'><p>Trait to be implemented by Genetic Programs trees.</p>
+</div>
+            <h2 id='associated-types'>Associated Types</h2>
+            <div class='methods'>
+        <h3 id='associatedtype.Environment' class='method stab '><span id='Environment.t' class='invisible'><code>type <a href='#associatedtype.Environment' class='type'>Environment</a></code></span></h3><div class='docblock'><p>Type of input when evaluating the tree.</p>
+</div><h3 id='associatedtype.Action' class='method stab '><span id='Action.t' class='invisible'><code>type <a href='#associatedtype.Action' class='type'>Action</a></code></span></h3><div class='docblock'><p>The type the tree will evaluate to.</p>
+</div></div>
+            <h2 id='required-methods'>Required Methods</h2>
+            <div class='methods'>
+        <h3 id='tymethod.branch' class='method stab '><span id='branch.v' class='invisible'><code>fn <a href='#tymethod.branch' class='fnname'>branch</a>&lt;R:&nbsp;<a class='trait' href='../../../rand/trait.Rng.html' title='rand::Rng'>Rng</a>&gt;(tg: &amp;mut <a class='struct' href='../../../evco/gp/tree/struct.TreeGen.html' title='evco::gp::tree::TreeGen'>TreeGen</a>&lt;R&gt;, current_depth: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>) -&gt; <a class='struct' href='../../../evco/gp/tree/struct.BoxTree.html' title='evco::gp::tree::BoxTree'>BoxTree</a>&lt;Self&gt;</code></span></h3><div class='docblock'><p>Generate a branch node (a node with at least one Tree child).</p>
+</div><h3 id='tymethod.leaf' class='method stab '><span id='leaf.v' class='invisible'><code>fn <a href='#tymethod.leaf' class='fnname'>leaf</a>&lt;R:&nbsp;<a class='trait' href='../../../rand/trait.Rng.html' title='rand::Rng'>Rng</a>&gt;(tg: &amp;mut <a class='struct' href='../../../evco/gp/tree/struct.TreeGen.html' title='evco::gp::tree::TreeGen'>TreeGen</a>&lt;R&gt;, current_depth: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>) -&gt; <a class='struct' href='../../../evco/gp/tree/struct.BoxTree.html' title='evco::gp::tree::BoxTree'>BoxTree</a>&lt;Self&gt;</code></span></h3><div class='docblock'><p>Generate a leaf node (a node without any Tree children).</p>
+</div><h3 id='tymethod.count_children' class='method stab '><span id='count_children.v' class='invisible'><code>fn <a href='#tymethod.count_children' class='fnname'>count_children</a>(&amp;mut self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a></code></span></h3><div class='docblock'><p>Count <code>Self</code> children of this node.</p>
+</div><h3 id='tymethod.children' class='method stab '><span id='children.v' class='invisible'><code>fn <a href='#tymethod.children' class='fnname'>children</a>(&amp;self) -&gt; <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;&amp;<a class='struct' href='../../../evco/gp/tree/struct.BoxTree.html' title='evco::gp::tree::BoxTree'>BoxTree</a>&lt;Self&gt;&gt;</code></span></h3><div class='docblock'><p>Get children of this node.</p>
+</div><h3 id='tymethod.children_mut' class='method stab '><span id='children_mut.v' class='invisible'><code>fn <a href='#tymethod.children_mut' class='fnname'>children_mut</a>(&amp;mut self) -&gt; <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;&amp;mut <a class='struct' href='../../../evco/gp/tree/struct.BoxTree.html' title='evco::gp::tree::BoxTree'>BoxTree</a>&lt;Self&gt;&gt;</code></span></h3><div class='docblock'><p>Get mutable children of this node.</p>
+</div><h3 id='tymethod.evaluate' class='method stab '><span id='evaluate.v' class='invisible'><code>fn <a href='#tymethod.evaluate' class='fnname'>evaluate</a>(&amp;self, env: &amp;Self::<a class='trait' href='../../../evco/gp/tree/trait.Tree.html' title='evco::gp::tree::Tree'>Environment</a>) -&gt; Self::<a class='trait' href='../../../evco/gp/tree/trait.Tree.html' title='evco::gp::tree::Tree'>Action</a></code></span></h3><div class='docblock'><p>Get indexed child of this node. Number children from 0; suggested to go left-to-right.
+Used to evaluate the root node of a tree.</p>
+</div></div>
+            <h2 id='provided-methods'>Provided Methods</h2>
+            <div class='methods'>
+        <h3 id='method.tree' class='method stab '><span id='tree.v' class='invisible'><code>fn <a href='#method.tree' class='fnname'>tree</a>&lt;R:&nbsp;<a class='trait' href='../../../rand/trait.Rng.html' title='rand::Rng'>Rng</a>&gt;(tg: &amp;mut <a class='struct' href='../../../evco/gp/tree/struct.TreeGen.html' title='evco::gp::tree::TreeGen'>TreeGen</a>&lt;R&gt;) -&gt; <a class='struct' href='../../../evco/gp/tree/struct.BoxTree.html' title='evco::gp::tree::BoxTree'>BoxTree</a>&lt;Self&gt;</code></span></h3><div class='docblock'><p>Generate a new tree within the bounds specified by TreeGen.</p>
+</div><h3 id='method.child' class='method stab '><span id='child.v' class='invisible'><code>fn <a href='#method.child' class='fnname'>child</a>&lt;R:&nbsp;<a class='trait' href='../../../rand/trait.Rng.html' title='rand::Rng'>Rng</a>&gt;(tg: &amp;mut <a class='struct' href='../../../evco/gp/tree/struct.TreeGen.html' title='evco::gp::tree::TreeGen'>TreeGen</a>&lt;R&gt;, current_depth: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>) -&gt; <a class='struct' href='../../../evco/gp/tree/struct.BoxTree.html' title='evco::gp::tree::BoxTree'>BoxTree</a>&lt;Self&gt;</code></span></h3><div class='docblock'><p>Generate a random new node to go into a tree.</p>
+</div></div>
+        <h2 id='implementors'>Implementors</h2>
+        <ul class='item-list' id='implementors-list'>
+    </ul><script type="text/javascript" async
+                         src="../../../implementors/evco/gp/tree/trait.Tree.js">
+                 </script></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../../";
+        window.currentCrate = "evco";
+    </script>
+    <script src="../../../jquery.js"></script>
+    <script src="../../../main.js"></script>
+    <script defer src="../../../search-index.js"></script>
+</body>
+</html>

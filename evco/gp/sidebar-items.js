@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["tree","Types and utilities for Genetic Program trees."]],"struct":[["Crossover","Configures crossover (mating) between GP individuals."],["Individual","A genetic individual to mate and mutate in a Genetic Program."],["Mutation","Configures crossover (mating) on GP individuals."]]});
