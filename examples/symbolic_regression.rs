@@ -45,12 +45,11 @@ impl Tree for Equation {
     }
 
     fn leaf<R: Rng>(tg: &mut TreeGen<R>, _: usize) -> BoxTree<Self> {
-        match tg.gen_range(0, 2) {
-                0 => Int(tg.gen_range(-1, 2)),
-                1 => Input,
-                _ => unreachable!(),
-            }
-            .into()
+        if tg.gen() {
+            Int(tg.gen_range(-1, 2)).into()
+        } else {
+            Input.into()
+        }
     }
 
     fn count_children(&mut self) -> usize {
